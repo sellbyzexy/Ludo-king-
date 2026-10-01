@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Cheat Edition</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* একদম উপরে ডানপাশে এআই বা প্লাস আইকন */
+        #secret-trigger {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+            z-index: 100;
+        }
+        #secret-trigger:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* সিক্রেট প্যানেল বা পপআপ বক্স */
+        #secret-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1e1e1e;
+            border: 2px solid #00ffcc;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            z-index: 1000;
+            text-align: center;
+        }
+        #secret-modal h3 {
+            margin-top: 0;
+            color: #00ffcc;
+        }
+        #secret-modal input {
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .modal-buttons button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-apply { background: #00ffcc; color: #000; }
+        .btn-close { background: #ff4d4d; color: #fff; }
+
+        /* গেম কনটেইনার */
+        .game-container {
+            text-align: center;
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .board-placeholder {
+            width: 250px;
+            height: 250px;
+            border: 4px dashed #00ffcc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #aaa;
+        }
+        .dice-btn {
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .dice-btn:hover { background: #e68a00; }
+        #status-display {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #00ffcc;
+        }
+
+        /* Created by Zexy ফুটার স্টাইল */
+        .creator-credit {
+            position: absolute;
+            bottom: 20px;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+        .creator-credit span {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- একদম উপরে ডানপাশে এআই/প্লাস আইকন -->
+    <div id="secret-trigger" onclick="openSecretPanel()" title="Secret Menu">🤖+</div>
+
+    <!-- সিক্রেট কোড দেওয়ার পপআপ বক্স -->
+    <div id="secret-modal">
+        <h3>Admin Secret Panel</h3>
+        <p style="font-size: 13px; color: #bbb;">Enter code to activate hack:</p>
+        <input type="password" id="secret-code-input" placeholder="Enter Code">
+        <div class="modal-buttons">
+            <button class="btn-apply" onclick="applyCheat()">Apply</button>
+            <button class="btn-close" onclick="closeSecretPanel()">Close</button>
+        </div>
+    </div>
+
+    <!-- মূল গেম ইন্টারফেস -->
+    <div class="game-container">
+        <h2>Ludo Master (Blue Turn)</h2>
+        <div class="board-placeholder">Ludo Board Area</div>
+        <button class="dice-btn" onclick="rollDice()">Roll Dice</button>
+        <div id="status-display">Dice Result: - | Blue Luck: Normal</div>
+    </div>
+
+    <!-- গেমের নিচে ক্রেডিট ট্যাগ -->
+    <div class="creator-credit">Created by <span>Zexy</span></div>
+
+    <script>
+        // গেমের ভেরিয়েবল
+        let blueLuckValue = 6; // নরমাল অবস্থায় ডাইস র্যানডম থাকবে
+        let isCheatActive = false;
+
+        // সিক্রেট প্যানেল ওপেন করার ফাংশন
+        function openSecretPanel() {
+            document.getElementById('secret-modal').style.display = 'block';
+        }
+
+        // সিক্রেট প্যানেল বন্ধ করার ফাংশন
+        function closeSecretPanel() {
+            document.getElementById('secret-modal').style.display = 'none';
+        }
+
+        // চিট কোড চেক করার ফাংশন
+        function applyCheat() {
+            let code = document.getElementById('secret-code-input').value;
+            
+            if (code === "1") {
+                blueLuckValue = 99; // কোড ১ দিলে ব্লুর লাক ৯৯ হয়ে যাবে
+                isCheatActive = true;
+                alert("Cheat Activated Successfully! Blue Luck is now 99.");
+                document.getElementById('status-display').innerHTML = "Dice Result: - | Blue Luck: 99 (HACKED)";
+                closeSecretPanel();
+            } else {
+                alert("Incorrect Code! Access Denied.");
+            }
+        }
+
+        // ছক্কা (Dice) রোল করার ফাংশন
+        function rollDice() {
+            let rolledNumber;
+
+            if (isCheatActive && blueLuckValue === 99) {
+                // যদি চিট অ্যাক্টিভ থাকে তবে সবসময় ৬ বা সুপার লাক আসবে
+                rolledNumber = 6; 
+            } else {
+                // সাধারণ নিয়ম অনুযায়ী ১ থেকে ৬ এর মধ্যে র্যানডম আসবে
+                rolledNumber = Math.floor(Math.random() * 6) + 1;
+            }
+
+            // রেজাল্ট স্ক্রিনে দেখানো
+            let luckText = isCheatActive ? "99 (HACKED)" : "Normal";
+            document.getElementById('status-display').innerHTML = `Dice Result: <b>${rolledNumber}</b> | Blue Luck: ${luckText}`;
+        }
+    </script>
+</body>
+</html>
